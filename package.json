@@ -1,0 +1,15 @@
+{
+  "name": "mushroom-cabal",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Mushroom Cabal",
+  "repository": "https://github.com/potatono/mushroom-cabal",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^0.6.1"
+  },
+  "scripts": {
+    "prestart": "npm install",
+    "start": "http-server -a localhost -p 8000"
+  }
+}

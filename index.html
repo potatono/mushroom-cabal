@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mushroom Cabal</title>
+	<link href='//fonts.googleapis.com/css?family=Roboto|Raleway|Open+Sans' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="index.css" type="text/css" />
+  	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+
+</head>
+<body>
+	<div id="stage">
+			<span class="ui-widget-content">
+			<h3>Fu Manchu Baby</h3>
+			<img src="https://33.media.tumblr.com/3261e9768b96a1b5cd5b9b08a4d96e5c/tumblr_n8wp5wwkpE1qe0wclo1_400.gif"/>
+			</span>
+
+			<span class="ui-widget-content">
+				<h3>YouTube Embed</h3>
+				<div class="overlay"></div>
+				<iframe width="560" height="315" src="//www.youtube.com/embed/iZw_LySNNzM" frameborder="0" allowfullscreen></iframe>
+			</span>
+
+	</div>
+	<div id="chat" class="well" ng-app="chat" ng-controller="Chat">
+	  <form class="form-inline">
+	    Your name: <input type="text" ng-model="username">
+	  </form>
+	  <div id="messages">
+	  	<div ng-cloak ng-repeat="message in messages">
+		    <em>{{message.from}}: </em>{{message.content}}
+	  	</div><br/>
+	  </div>
+	  <form class="form-inline" ng-submit="addMessage()">
+	    <input id="message" type="text" ng-model="message" placeholder="Message...">
+	  </form>
+	</div>
+
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
+	<script src="//cdn.firebase.com/v0/firebase.js"></script>
+	<script src="//cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script>
+	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+
+	<script type="text/javascript">
+	  angular.module('chat', ['firebase']).controller('Chat', ['$scope', '$firebase',
+	    function($scope, $firebase) {
+	      var ref = new Firebase('https://mushroom-cabal.firebaseio.com/shithead');
+	      $scope.messages = $firebase(ref.limit(150));
+	      $scope.username = 'Guest' + Math.floor(Math.random()*101);
+
+	      $scope.addMessage = function() {
+	      	if ($scope.message) {
+		        $scope.messages.$add({
+		          from: $scope.username, content: $scope.message
+	    	    });
+	        	$scope.message = "";
+	        }
+	        $('#messages').animate({scrollTop: $('#messages').height() }, 100);
+	      };
+
+	      console.log($scope.messages);
+	      $scope.messages.$on('loaded', function() {
+	        $('#messages').animate({scrollTop: $('#messages').height() }, 100);
+	      });
+	  	}]);
+
+	  	$('.ui-widget-content')
+	  		.draggable({
+		  		start: function(event, ui) {
+	  				$(this).addClass('dragging').children('.overlay').show();
+	  			},
+	  			stop: function(event, ui) {
+		  			$(this).removeClass('dragging').children('.overlay').hide();
+		  		}
+		  	})
+	  		.resizable({
+		  		start: function(event, ui) {
+	  				$(this).addClass('resizing').children('.overlay').show();
+	  			},
+	  			resize: function(event,ui) {
+		  			$(this).children('.overlay').show();
+		  			$(this).children('img,iframe,canvas,video').addClass("resized")
+	  			},
+	  			stop: function(event, ui) {
+	  				$(this).removeClass('resizing').children('.overlay').hide();;
+		  		}
+	  		})
+	  		.hover(
+		  		function() { $(this).addClass('hover'); }, 
+		  		function() { $(this).removeClass('hover'); }
+	  		);
+
+
+	</script>
+</body>
+</html>
