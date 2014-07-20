@@ -6,7 +6,7 @@ body {
 }
 
 #chat {
-	z-index: 10;
+	z-index: 100000;
 	position: absolute;
 	right: 0px;
 	top: 0px;
@@ -27,8 +27,10 @@ body {
 	width: calc(100% - 100px);
 }
 
-#stage span {
-	display: relative;
+#stage span.ui-widget-content {
+	position: absolute;
+	top: 0px;
+	left: 0px;
 	padding: 0;
 	margin: 0;
 	display: inline-block;
@@ -36,6 +38,18 @@ body {
 	background-color: #333;
 	background-image: none;
 	z-index: 100;
+}
+
+#stage span.close {
+	color: #eee;
+	position: absolute;
+	top: 0px;
+	z-index: 10000;
+	background-color: none;
+	margin: 0;
+	padding: 0;
+	right: 5px;
+	cursor: default;
 }
 
 #stage span.hover {
@@ -49,9 +63,14 @@ body {
 	padding: 0;
 }
 
-#stage .resized {
+#stage span img,iframe,canvas,video {
 	width: 100%;
 	height: calc(100% - 25px);
+}
+
+#stage span .loading {
+	width: auto;
+	height: auto;
 }
 
 .overlay {
