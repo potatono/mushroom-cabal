@@ -8,6 +8,12 @@
 
 </head>
 <body>
+	<div id="stage" ng-controller="Content">
+		<div ng-cloak ng-repeat="(id, item) in items">
+			<widget />
+		</div>
+	</div>
+
 	<div id="chat" class="well" ng-controller="Chat">
 	  <form class="form-inline">
 	    Your name: <input type="text" ng-model="username">
@@ -21,206 +27,13 @@
 	    <input id="message" type="text" ng-model="message" placeholder="Message...">
 	  </form>
 	</div>
-	<div id="stage" ng-controller="Content">
-		<div ng-cloak ng-repeat="(id, item) in items">
-			<widget />
-<!--			<div ng-switch on="item.type">
-				<div ng-switch-when="iframe">
-					<span id="{{id}}" class="ui-widget-content">
-						<h3>{{item.url}}</h3>
-						<div class="overlay"></div>
-						<iframe ng-src="{{item.url}}" width="560" height="315" frameborder="0"></iframe>
-					</span>
-				</div>
-				<div ng-switch-when="image">
-					<span id="{{id}}" class="ui-widget-content">
-						<h3>image</h3>
-						<img ng-src="{{item.url}}" />
-					</span>
-				</div>
-				<div ng-switch-default>
-					<span id="{{id}}" class="ui-widget-content">
-						<h3>default</h3>
-						<div class="overlay"></div>
-						<iframe ng-src="{{item.url}}" width="640" height="480" frameborder="0"></iframe>
-			
-					</span>
-				</div>-->
-			</div>
-		</div>
-		<!--
-			<span class="ui-widget-content">
-			<h3>Fu Manchu Baby</h3>
-			<img src="https://33.media.tumblr.com/3261e9768b96a1b5cd5b9b08a4d96e5c/tumblr_n8wp5wwkpE1qe0wclo1_400.gif"/>
-			</span>
-
-			<span class="ui-widget-content">
-				<h3>YouTube Embed</h3>
-				<div class="overlay"></div>
-				<iframe width="560" height="315" src="//www.youtube.com/embed/iZw_LySNNzM" frameborder="0" allowfullscreen></iframe>
-			</span>
-		-->
-	</div>
-
+	
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
 	<script src="//cdn.firebase.com/v0/firebase.js"></script>
 	<script src="//cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script>
 	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-
-	<script type="text/javascript">
-		var app = angular.module('chat', ['firebase']);
-
-		app.controller('Chat', ['$scope', '$firebase', 
-		    function($scope, $firebase) {
-
-		    var ref = new Firebase('https://mushroom-cabal.firebaseio.com/shithead');
-		    $scope.messages = $firebase(ref.limit(150));
-		    $scope.username = 'Guest' + Math.floor(Math.random()*101);
-
-	      	$scope.addMessage = function() {
-		      	if ($scope.message) {
-		      		if (/(http(?:s)?:\/\/[\w\.\-\/\?:#&=]+)/.test($scope.message)) {
-		      			$scope.$root.$broadcast('url', RegExp.$1, $scope.message);
-		      		}
-			        $scope.messages.$add({
-			          from: $scope.username, content: $scope.message
-	    	    	});
-	        		$scope.message = "";
-	        	}
-	        	$('#messages').animate({scrollTop: $('#messages').prop('scrollHeight') }, 100);
-	      	};
-
-		      $scope.messages.$on('loaded', function() {
-	      			$('#messages').animate({scrollTop: $('#messages').prop('scrollHeight') }, 100);
-	      		});
-	  		}
-	  	]);
-
-		app.controller('Content', ['$scope', '$firebase', '$sce',
-	  		function($scope, $firebase, $sce) {
-	  			var ref = new Firebase('https://mushroom-cabal.firebaseio.com/shithead_content');
-	  			$scope.items = $firebase(ref.limit(10));
-	  			$scope.maxZ = 100;
-
-	  			$scope.addItem = function() {
-	  				$scope.items.$add({
-	  					name: $scope.name,
-	  					type: $scope.type,
-	  					url: $scope.url,
-	  					x: 0,
-	  					y: 0,
-	  					z: 0,
-	  					width: "",
-	  					height: "",
-	  					active: false
-	  				});
-	  			};
-
-	  			$scope.$on('url', function(event, url, message) {
-	  				$scope.name = message.replace(url,"").replace(/[^\w\s]/g, "");
-	  				$scope.type = /\.(?:jpg|gif|png|jpeg|svg)$/i.test(url) ? "image" : "iframe";
-	  				$scope.url = url;
-	  				$scope.addItem();
-	  			});
-
-	  			$scope.items.$on("child_removed", function(c) {
-	  				$('#'+c.snapshot.name).remove();
-	  			})
-	  		}
-	  	]);
-
-	  	app.directive('widget', function($sce) {
-	  		return {
-	  			restrict: 'E',
-	  			replace: true,
-	  			template: '<span id="{{id}}" class="ui-widget-content" ng-style="{ top: item.y, left: item.x, width: item.width, height: item.height, \'z-index\': item.z }"></span>',
-
-	  			link: function(scope, elem, attrs) {
-	  				var url = $sce.trustAsResourceUrl(scope.item.url);
-	  				scope.$parent.maxZ = Math.max(scope.$parent.maxZ, scope.item.z);
-
-					elem.append('<span class="close">x</span>')
-	  				elem.children('.close').click(function(e) { 
-	  					e.stopPropagation();
-	  					scope.$parent.items.$remove(scope.id);
-	  				});
-	  				elem.append('<h3>'+(scope.item.name || scope.item.type)+'</h3>');
-
-	  				switch (scope.item.type) {
-	  					case "iframe":
-	  						elem.append('<div class="overlay" />');
-	  						elem.append('<iframe src="' + url + 
-	  							'" frameborder="0"></iframe>');
-	  						break;
-	  					case "image":
-	  						elem.append('<img src="' + url + '" />');
-
-	  						if (!scope.item.width && !scope.item.height) {
-	  							elem.children('img').addClass("loading").load(function() { 
-	  								scope.item.width = $(this).width() + "px";
-	  								scope.item.height = ($(this).height() + 25) + "px";
-	  								scope.$parent.items.$save(scope.id);
-	  								$(this).removeClass("loading");
-	  							});	
-	  						}
-	  						
-	  						break;
-	  					default:
-	  						elem.append('<div class="overlay" />');
-	  						elem.append('<iframe src="' + url + 
-	  							'" frameborder="0"></iframe>');
-	  						break;
-	  				}
-
-	  				elem.draggable({
-				  		start: function(event, ui) {
-	  						$(this).addClass('dragging').children('.overlay').show();
-	  					},
-			  			stop: function(event, ui) {
-				  			$(this).removeClass('dragging').children('.overlay').hide();
-
-				  			scope.$apply(function read() {
-				  				scope.item.x = elem.css('left');
-				  				scope.item.y = elem.css('top');
-				  				scope.item.z = elem.css('z-index');
-				  				scope.$parent.items.$save(scope.id);
-				  			})
-				  		}
-				  	})
-			  		.resizable({
-				  		start: function(event, ui) {
-			  				$(this).addClass('resizing').children('.overlay').show();
-			  			},
-			  			resize: function(event,ui) {
-				  			$(this).children('.overlay').show();
-			  			},
-			  			stop: function(event, ui) {
-			  				$(this).removeClass('resizing').children('.overlay').hide();;
-
-				  			scope.$apply(function() {
-				  				scope.item.width = elem.css('width');
-				  				scope.item.height = elem.css('height');
-				  				scope.$parent.items.$save(scope.id);
-				  			})
-
-				  		}
-			  		})
-			  		.hover(
-				  		function() { $(this).addClass('hover'); }, 
-				  		function() { $(this).removeClass('hover'); }
-			  		)
-			  		.click(
-			  			function() { 
-		  					scope.item.z = ++scope.$parent.maxZ;
-		  					scope.$parent.items.$save(scope.id);
-			  			}
-			  		);
-	  			}
-	  		};
-	  	});
-
-	</script>
+	<script src="app.js"></script>
 </body>
 </html>
