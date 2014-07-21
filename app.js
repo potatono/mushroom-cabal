@@ -9,7 +9,7 @@ app._init = function() {
 	document.title = "linkyloo - " + app._getRoom();
 
 	if (top.location.host != "linkyloo.com" && top.location.host != "localhost")
-		top.location.host = "linkyloo.com";
+		top.location.href = "http://linkyloo.com/";
 
 	return app;
 }
@@ -173,10 +173,24 @@ app._setupWidgetIframe = function(scope, elem, $sce) {
 
 app._setupWidgetYoutube = function(scope, elem, $sce) {
 	/(?:v=|\/)(\w+)$/.test(scope.item.url);
-	var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+RegExp.$1);
+	var videoId = RegExp.$1;
+	var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+videoId);
+
 	elem.append('<div class="overlay" />');
-	elem.append('<iframe src="' + url + 
-		'" width="560" height="315" frameborder="0"></iframe>');
+
+	elem.append('<div id="' + scope.id + '_player" />');
+
+	var player = new YT.Player(scope.id + '_player', {
+		width: 560,
+		height: 315,
+		videoId: videoId,
+		events: {
+			onStateChange: function(e) { console.log(e); }
+		}
+	});
+
+//	elem.append('<iframe src="' + url + 
+//		'" width="560" height="315" frameborder="0"></iframe>');
 }
 
 // Add the events to the widget to make it active.
