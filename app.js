@@ -1,12 +1,22 @@
 var app = angular.module('chat', ['firebase']);
 
-app._startTime = (new Date()).getTime();
+app._init = function() {
+	app._startTime = (new Date()).getTime();	
+
+	// Hacky way to make the room actually change when hash changes.. TODO FIXME
+	$(window).on('hashchange', function() { window.location.reload(); });
+
+	document.title = "linkyloo - " + app._getRoom();
+
+	if (top.location.host != "linkyloo.com" && top.location.host != "localhost")
+		top.location.host = "linkyloo.com";
+
+	return app;
+}
 
 app._getRoom = function() {
 	return window.location.hash.replace(/\W/g,'') || "chat";
 }
-// Hacky way to make the room actually change when hash changes.. TODO FIXME
-$(window).on('hashchange', function() { window.location.reload(); });
 
 app._scrollToBottom = function() {
 	// New child is fired for every chat line on page load, even if you only set the event
@@ -220,3 +230,5 @@ app._setupWidgetEvents = function(scope,elem) {
 		}
 	);
 }
+
+app._init();
