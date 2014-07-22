@@ -185,9 +185,51 @@ app._setupWidgetYoutube = function(scope, elem, $sce) {
 		height: 315,
 		videoId: videoId,
 		events: {
-			onStateChange: function(e) { console.log(e); }
+			onStateChange: function(e) {  
+				if (e.data == YT.PlayerState.PLAYING) {
+					scope.$apply(function() {
+						scope.item.active = true;
+						scope.$parent.items.$save(scope.id);
+					});
+				}
+				else if (e.data == YT.PlayerState.PAUSED) {
+					scope.$apply(function() {
+						scope.item.active = false;
+						scope.$parent.items.$save(scope.id);
+					});
+				}
+			},
+
+			onReady: function(e) {
+				scope.$watch("item.active", function() {
+					if (scope.item.active) {
+						player.playVideo();
+					}
+					else {
+						player.pauseVideo();
+					}
+				});
+
+				scope.$watch("item.position", function() {
+					player.seekTo(scope.item.position, true);
+				})
+			}
 		}
 	});
+
+	var lastTime = 0;
+	var timer = window.setInterval(function() { 
+		var time = player.getCurrentTime();
+		if (Math.abs(time-lastTime) > 5) {
+			scope.item.position = time;
+			scope.$parent.items.$save(scope.id);
+		}
+		lastTime = time;
+	}, 250);
+
+
+	elem.on("remove", function() { window.clearInterval(timer); })
+	
 
 //	elem.append('<iframe src="' + url + 
 //		'" width="560" height="315" frameborder="0"></iframe>');
@@ -208,7 +250,7 @@ app._setupWidgetEvents = function(scope,elem) {
 		stop: function(event, ui) {
 				$(this).removeClass('dragging').children('.overlay').hide();
 
-  			scope.$apply(function read() {
+  				scope.$apply(function read() {
 					scope.item.x = elem.css('left');
 					scope.item.y = elem.css('top');
 					scope.item.z = elem.css('z-index');
@@ -229,7 +271,7 @@ app._setupWidgetEvents = function(scope,elem) {
 				scope.$apply(function() {
 					scope.item.width = elem.css('width');
 					scope.item.height = elem.css('height');
-  				scope.$parent.items.$save(scope.id);
+  					scope.$parent.items.$save(scope.id);
 				})
 			}
 	})
