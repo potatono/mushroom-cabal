@@ -7,7 +7,7 @@ body {
 
 #chat {
 	z-index: 100000;
-	position: absolute;
+	position: fixed;
 	right: 0px;
 	top: 0px;
 	width: 350px;
@@ -124,4 +124,16 @@ body {
 
 .modal-footer img {
 	margin-right: 5px;
+}
+
+#presence {
+	position: fixed;
+	bottom: 0;
+	height: 100px;
+	width: calc(100% - 350px);
+	text-align:center;
+}
+
+#presence img {
+	padding: 1px 5px 1px 5px;
 }

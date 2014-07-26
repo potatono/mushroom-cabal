@@ -56,7 +56,7 @@ app._scrollToBottom = function() {
 app.controller('Chat', ['$scope', '$firebase', '$firebaseSimpleLogin',
     function($scope, $firebase, $firebaseSimpleLogin) {
     	var room = app._getRoom();
-    	var ref = new Firebase('https://mushroom-cabal.firebaseio.com/rooms/'+room);
+    	var ref = new Firebase('https://mushroom-cabal.firebaseio.com/rooms/'+room+'/chat');
 	    // TODO FIXME ref.limit doens't seem to work.
 	    $scope.messages = $firebase(ref.limit(150));
 	    $scope.user = app._user;
@@ -69,9 +69,13 @@ app.controller('Chat', ['$scope', '$firebase', '$firebaseSimpleLogin',
 	      		if (/(http(?:s)?:\/\/[\w\.\-\/\?:#&=]+)/.test($scope.message)) {
 	      			$scope.$root.$broadcast('url', RegExp.$1, $scope.message);
 	      		}
+
 		        $scope.messages.$add({
-		          from: $scope.username, content: $scope.message
+					"from": $scope.username,  
+					"content": $scope.message,
+					"avatar": (app._profile && app._profile.avatar)
 		    	});
+
 	    		$scope.message = "";
 	    	}
 	    	// Scroll to the bottom on add message
@@ -83,6 +87,15 @@ app.controller('Chat', ['$scope', '$firebase', '$firebaseSimpleLogin',
 
 	    // Scroll to bottom on new child. 
 	    $scope.messages.$on('child_added', app._scrollToBottom);
+	}
+]);
+
+app.controller('Presence', ['$scope', '$firebase', 
+	function($scope, $firebase) {
+		var room = app._getRoom();
+		var ref = new Firebase('https://mushroom-cabal.firebaseio.com/rooms/'+room+'/members');
+
+		$scope.users = $firebase(ref);
 	}
 ]);
 
@@ -99,7 +112,7 @@ app._getTypeFromUrl = function(url) {
 app.controller('Content', ['$scope', '$firebase', '$sce',
 	function($scope, $firebase, $sce) {
 		var room = app._getRoom();
-		var ref = new Firebase('https://mushroom-cabal.firebaseio.com/content/'+room);
+		var ref = new Firebase('https://mushroom-cabal.firebaseio.com/rooms/'+room+'/content');
 		$scope.items = $firebase(ref.limit(10));
 		$scope.maxZ = 100;
 
@@ -349,6 +362,33 @@ app.signup = function() {
 	})
 }
 
+app._getAvatar = function() {
+	var u = app._user;
+	var tpd = app._user.thirdPartyUserData;
+
+	if (u.provider === "twitter" && tpd.profile_image_url) { 
+		return tpd.profile_image_url;
+	}
+	else if (u.provider === "github" && tpd.avatar_url) {
+		return tpd.avatar_url + "?s=48";
+	}
+	else if (u.provider === "google" && tpd.picture) {
+		return tpd.picture.replace(/(.+)\/(.*)/,'$1/s48-c/$2');
+	}
+	else if (u.provider === "facebook" && tpd.picture && !tpd.picture.data.is_silhouette) {
+		return tpd.picture.data.url.replace(/\/s\d+x\d+\//,'/s48x48/');
+	}
+	else if (u.email) {
+		return "http://www.gravatar.com/avatar/" + md5(u.email) + ".png?d=retro&s=48";
+	}
+	else if (tpd.email) {
+		return "http://www.gravatar.com/avatar/" + md5(tpd.email) + ".png?d=retro&s=48";
+	}
+	else {
+		return "http://www.gravatar.com/avatar/" + md5(Math.random()) + ".png?d=retro&s=48";
+	}
+}
+
 app._setUser = function(user) {
 	app._user = user;
 
@@ -361,10 +401,17 @@ app._setUser = function(user) {
    			var profile = row.val();
 
    			if (profile) {
+   				profile.avatar = app._getAvatar();
+   				
    				app._profile = profile;
    				$scope.$apply(function() { $scope.username = profile.username });
+
+   				var online = app._ref.child("rooms").child(app._getRoom()).child("members").child(user.uid);
+   				online.set(profile);
+   				online.onDisconnect().remove();
    			}
    			else {
+ 				$('#changePassword').toggle(app._user.provider === "password");
    				$('#profileDialog').modal('show');
    			}
    		},
@@ -377,9 +424,8 @@ app._setUser = function(user) {
 app.updateProfile = function() {
 	$('#username').val(app._profile.username);
 	$('#profileError').addClass("hide");
-	$('#profileDialog').modal('show');
-
 	$('#changePassword').toggle(app._user.provider === "password");
+	$('#profileDialog').modal('show');
 }
 
 app.saveProfile = function() {
@@ -388,7 +434,7 @@ app.saveProfile = function() {
 
 	if (!app._profile || username != app._profile.username) {
 		app._ref.child("@usernames").child(username).set({
-			"username": username
+			"uid": app._user.uid
 		},
 		function(error) {
 			if (error) {
@@ -429,6 +475,7 @@ app.saveProfile = function() {
 
 app.signout = function() {
 	console.log("Logging out");
+	app._ref.child("rooms").child(app._getRoom()).child("members").child(app._user.uid).remove();
 	app._auth.logout();
 	// TODO FIXME HACK
 	window.setTimeout(function() { window.location.reload() }, 250);
