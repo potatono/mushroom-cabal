@@ -3,9 +3,10 @@
 <head>
 	<title>linkyloo</title>
 	<link href='//fonts.googleapis.com/css?family=Roboto|Raleway|Open+Sans' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="index.css" type="text/css" />
   	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
-
+  	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 <body>
 	<div id="stage" ng-controller="Content">
@@ -15,25 +16,100 @@
 	</div>
 
 	<div id="chat" class="well" ng-controller="Chat">
-	  <form class="form-inline">
-	    Your name: <input type="text" ng-model="username">
-	  </form>
-	  <div id="messages">
-	  	<div ng-cloak ng-repeat="message in messages">
-		    <em>{{message.from}}: </em>{{message.content}}
-	  	</div><br/>
-	  </div>
-	  <form class="form-inline" ng-submit="addMessage()">
-	    <input id="message" type="text" ng-model="message" placeholder="Message...">
-	  </form>
+		<div id="auth">
+			<span class="username" ng-show="user">Hello <a href="javascript:void(0)" onclick="app.updateProfile();">{{username}}</a>!</span>
+			<button ng-hide="user" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#loginDialog">login</button>
+			<button ng-show="user" class="btn btn-primary btn-sm" onclick="app.signout();">logout</button>
+
+			<!--<span ng-hide="auth.user"><a href="#" ng-click="auth.$login('password')">login</a></span>
+			<span ng-show="auth.user"><a href="#" ng-click="auth.$logout();">logout</a></span>-->
+		</div>
+		<div id="messages">
+			<div ng-cloak ng-repeat="message in messages">
+				<em>{{message.from}}: </em>{{message.content}}
+			</div><br/>
+		</div>
+		<form ng-show="user" class="form-inline" ng-submit="addMessage()">
+			<input id="message" type="text" ng-model="message" placeholder="Message...">
+		</form>
 	</div>
-	
+
+	<div class="modal fade" id="loginDialog" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Sign In</h4>
+				</div>
+				<div class="modal-body">
+
+					<form role="form">
+						<div class="form-group">
+							<label for="email">Email address</label>
+							<input type="email" class="form-control" id="email" placeholder="Enter email">
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Password">
+						</div>
+						<div id="loginError" class="alert alert-danger hide"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" onclick="app.signin();">Sign In</button>
+						<button type="button" class="btn btn-primary" onclick="app.signup();">Sign Up</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="profileDialog" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Update Profile</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						<div class="form-group">
+							<label for="username">Display Name</label>
+							<input type="text" class="form-control" id="username" placeholder="Enter display name">
+						</div>
+
+						<div id="changePassword">
+							<hr />
+
+							<div class="form-group">
+								<label for="curpass">Current Password</label>
+								<input type="password" class="form-control" id="curpass" placeholder="Enter current password">
+							</div>
+
+							<div class="form-group">
+								<label for="newpass">New Password</label>
+								<input type="password" class="form-control" id="newpass" placeholder="Enter new password">
+							</div>
+
+						</div>
+						
+						<div id="profileError" class="alert alert-danger hide"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" onclick="app.saveProfile();">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>
 	<script src="//cdn.firebase.com/v0/firebase.js"></script>
 	<script src="//cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script>
+	<script src="//cdn.firebase.com/js/simple-login/1.6.2/firebase-simple-login.js"></script>
 	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script src="//www.youtube.com/iframe_api"></script>
 	<script src="app.js"></script>
 </body>

@@ -10,21 +10,22 @@ body {
 	position: absolute;
 	right: 0px;
 	top: 0px;
-	width: 30%;
+	width: 350px;
 	height: calc(100% - 5px);
 	padding: 5px 10px 0 10px;
 	border-left: 1px solid #666;
 	background-color: #eee;
+	margin-bottom: 0;
 }
 
 #messages {
-	height: calc(100% - 100px);
+	height: calc(100% - 60px);
 	overflow-y: scroll;
 	word-wrap: break-word;
 }
 
 #message {
-	width: calc(100% - 100px);
+	width: calc(100% - 30px);
 }
 
 #stage span.ui-widget-content {
@@ -83,4 +84,28 @@ body {
 	background-color: rgba(100,100,100,0.5);
 	display: inline-block;
 	display: none;
+}
+
+.modal {
+	z-index: 100050 !important;
+}
+
+.modal-backdrop {
+	z-index: 100040 !important;
+}
+
+#auth .username {
+	font-size: 12pt;
+}
+
+#auth .btn {
+	display: inline-block;
+	position: absolute;
+	right: 30px;
+	height: 22px;
+	padding-top: 0;
+}
+
+#auth {
+	padding-bottom: 5px;
 }
