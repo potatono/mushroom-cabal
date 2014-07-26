@@ -386,7 +386,7 @@ app.saveProfile = function() {
 	$('#profileError').addClass("hide");
 	var username = $('#username').val();
 
-	if (username != app._profile.username) {
+	if (!app._profile || username != app._profile.username) {
 		app._ref.child("@usernames").child(username).set({
 			"username": username
 		},
@@ -395,7 +395,8 @@ app.saveProfile = function() {
 				$('#profileError').text("That username is taken").removeClass("hide");
 			}
 			else {
-				app._ref.child("@usernames").child(app._profile.username).remove();
+				if (app._profile)
+					app._ref.child("@usernames").child(app._profile.username).remove();
 
 				app._ref.child("@profiles").child(app._user.uid).set({
 					"username": username

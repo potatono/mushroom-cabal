@@ -55,8 +55,16 @@
 						<div id="loginError" class="alert alert-danger hide"></div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" onclick="app.signin();">Sign In</button>
-						<button type="button" class="btn btn-primary" onclick="app.signup();">Sign Up</button>
+						<div class="left">
+							<a href="javascript:void(0)" onclick="app._auth.login('twitter')"><img src="assets/twitter.png" /></a>
+							<a href="javascript:void(0)" onclick="app._auth.login('facebook')"><img src="assets/facebook.png" /></a>
+							<a href="javascript:void(0)" onclick="app._auth.login('google')"><img src="assets/google.png" /></a>
+							<a href="javascript:void(0)" onclick="app._auth.login('github')"><img src="assets/github.png" /></a>
+						</div>
+						<div class="right">
+							<button type="button" class="btn btn-default" onclick="app.signin();">Sign In</button>
+							<button type="button" class="btn btn-primary" onclick="app.signup();">Sign Up</button>
+						</div>
 					</div>
 				</form>
 			</div>

@@ -109,3 +109,19 @@ body {
 #auth {
 	padding-bottom: 5px;
 }
+
+.modal-footer .left {
+	width: 49%;
+	text-align: left;
+	display: inline-block;
+}
+
+.modal-footer .right {
+	width: 49%;
+	text-align: right;
+	display: inline-block;
+}
+
+.modal-footer img {
+	margin-right: 5px;
+}
