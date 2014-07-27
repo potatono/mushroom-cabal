@@ -13,6 +13,19 @@ app._init = function() {
 	if (top.location.host != "linkyloo.com" && top.location.host != "localhost")
 		top.location.href = "http://linkyloo.com/";
 
+
+	// Show message to reload if version updates.
+	app._ref.child("@version").on("value", function(snap) {
+		console.log("Version="+snap.val());
+		if (!app._version) {
+			app._version = snap.val();
+		}
+		else if (app._version != snap.val()) {
+			
+			$('#reload').removeClass("hide");
+		}
+	});
+
 	return app;
 }
 
@@ -71,6 +84,7 @@ app.controller('Chat', ['$scope', '$firebase', '$firebaseSimpleLogin',
 	      		}
 
 		        $scope.messages.$add({
+		        	"uid": app._user.uid,
 					"from": $scope.username,  
 					"content": $scope.message,
 					"avatar": (app._profile && app._profile.avatar)

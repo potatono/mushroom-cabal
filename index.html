@@ -2,13 +2,18 @@
 <html ng-app="chat">
 <head>
 	<title>linkyloo</title>
-	<link href='//fonts.googleapis.com/css?family=Roboto|Raleway|Open+Sans' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
   	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
   	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="index.css?v=5" type="text/css" />
 </head>
 <body>
+	<div id="reload" class="alert alert-danger alert-dismissable hide" role="alert">
+		<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		A new version of linkyloo is available.  <a href="javascript:window.location.reload()" class="alert-link">Reload</a>.
+	</div>
+
 	<div id="stage" ng-controller="Content">
 		<div ng-cloak ng-repeat="(id, item) in items">
 			<widget />
@@ -25,9 +30,12 @@
 			<span ng-show="auth.user"><a href="#" ng-click="auth.$logout();">logout</a></span>-->
 		</div>
 		<div id="messages">
-			<div ng-cloak ng-repeat="message in messages">
-				<em>{{message.from}}: </em>{{message.content}}
-			</div><br/>
+			<div ng-cloak class="message" ng-repeat="message in messages">
+				<div ng-class="{true:'mine', false:'notmine'}[message.uid==user.uid]">
+					<div class="from"><img ng-src="{{message.avatar}}" class="img-circle" /><span>{{message.from}}</span></div>
+					<div class="content">{{message.content}}</div>
+				</div>
+			</div>
 		</div>
 		<form ng-show="user" class="form-inline" ng-submit="addMessage()">
 			<input id="message" type="text" ng-model="message" placeholder="Message...">
