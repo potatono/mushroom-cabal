@@ -147,7 +147,8 @@ app.controller('Content', ['$scope', '$firebase', '$sce',
 		// When we receive a URL event broadcast from the chat controller
 		// we call addItem to create a new widget
 		$scope.$on('url', function(event, url, message) {
-			$scope.name = message.replace(url,"").replace(/[^\w\s]/g, "");
+			$scope.name = message.replace(url,"").replace(/\+\w+\s?/g,"").replace(/[^\w\s]/g, "");
+			$scope.flags = message.match(/\+\w+/g);
 			$scope.type = app._getTypeFromUrl(url);
 			$scope.url = url;
 			$scope.addItem();
@@ -222,7 +223,8 @@ app._setupWidgetIframe = function(scope, elem, $sce) {
 }
 
 app._setupWidgetYoutube = function(scope, elem, $sce) {
-	var videoId,list;
+	var videoId;
+	var playerVars = {};
 
 	if (/v=([\w\-]+)/.test(scope.item.url))
 		videoId = RegExp.$1;
@@ -232,22 +234,30 @@ app._setupWidgetYoutube = function(scope, elem, $sce) {
 		videoId = RegExp.$1;
 	
 	if (/list=([\w\-]+)/.test(scope.item.url))
-		list = RegExp.$1;
+		playerVars["list"] = RegExp.$1;
 
-	console.log("Loading YouTube video="+videoId+" list="+list)
-	var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+videoId);
+	console.log("Loading YouTube video="+videoId)
+	//var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+videoId);
 
 	elem.append('<div class="overlay" />');
-
 	elem.append('<div id="' + scope.id + '_player" />');
 
+	if (scope.flags) {
+		scope.flags.forEach(function(flag) {
+			if (flag == "+loop") {
+				playerVars["loop"]=1;
+				playerVars["list"]=(playerVars["list"]||videoId);
+			}
+			
+			if (flag == "+start") playerVars["autoplay"]=1;
+		});
+	}
+console.log(playerVars);
 	var player = new YT.Player(scope.id + '_player', {
 		width: 560,
 		height: 315,
 		videoId: videoId,
-		playerVars: {
-			list: list
-		},
+		playerVars: playerVars,
 		events: {
 			onStateChange: function(e) {  
 				if (e.data == YT.PlayerState.PLAYING) {
