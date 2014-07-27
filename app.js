@@ -222,8 +222,19 @@ app._setupWidgetIframe = function(scope, elem, $sce) {
 }
 
 app._setupWidgetYoutube = function(scope, elem, $sce) {
-	/(?:v=|\/)(\w+)$/.test(scope.item.url);
-	var videoId = RegExp.$1;
+	var videoId,list;
+
+	if (/v=([\w\-]+)/.test(scope.item.url))
+		videoId = RegExp.$1;
+	else if (/\/([\w\-]+)$/.test(scope.item.url))
+		videoId = RegExp.$1;
+	else if (/\/([\w\-]+)\?/.test(scope.item.url))
+		videoId = RegExp.$1;
+	
+	if (/list=([\w\-]+)/.test(scope.item.url))
+		list = RegExp.$1;
+
+	console.log("Loading YouTube video="+videoId+" list="+list)
 	var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+videoId);
 
 	elem.append('<div class="overlay" />');
@@ -234,6 +245,9 @@ app._setupWidgetYoutube = function(scope, elem, $sce) {
 		width: 560,
 		height: 315,
 		videoId: videoId,
+		playerVars: {
+			list: list
+		},
 		events: {
 			onStateChange: function(e) {  
 				if (e.data == YT.PlayerState.PLAYING) {
