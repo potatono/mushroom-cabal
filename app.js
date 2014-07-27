@@ -140,6 +140,7 @@ app.controller('Content', ['$scope', '$firebase', '$sce',
 				z: 0,
 				width: "",
 				height: "",
+				flags: $scope.flags,
 				active: false
 			});
 		};
@@ -242,17 +243,15 @@ app._setupWidgetYoutube = function(scope, elem, $sce) {
 	elem.append('<div class="overlay" />');
 	elem.append('<div id="' + scope.id + '_player" />');
 
-	if (scope.flags) {
-		scope.flags.forEach(function(flag) {
-			if (flag == "+loop") {
-				playerVars["loop"]=1;
-				playerVars["list"]=(playerVars["list"]||videoId);
-			}
-			
+	if (scope.item.flags) {
+		scope.item.flags.forEach(function(flag) {
+			if (flag == "+loop") playerVars["loop"]=1;
 			if (flag == "+start") playerVars["autoplay"]=1;
+			if (flag == "+mute") playerVars["mute"]=1;
 		});
 	}
-console.log(playerVars);
+	console.log(scope.item.flags);
+
 	var player = new YT.Player(scope.id + '_player', {
 		width: 560,
 		height: 315,
@@ -272,9 +271,14 @@ console.log(playerVars);
 						scope.$parent.items.$save(scope.id);
 					});
 				}
+				else if (e.data == YT.PlayerState.ENDED && playerVars["loop"]){
+					player.playVideo();
+				}
 			},
 
 			onReady: function(e) {
+				if (playerVars["mute"]) player.mute();
+				
 				scope.$watch("item.active", function() {
 					if (scope.item.active) {
 						player.playVideo();
@@ -311,10 +315,8 @@ console.log(playerVars);
 		}
 	}, 250);
 
-
 	elem.on("remove", function() { window.clearInterval(timer); })
 	
-
 //	elem.append('<iframe src="' + url + 
 //		'" width="560" height="315" frameborder="0"></iframe>');
 }
