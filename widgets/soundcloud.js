@@ -84,8 +84,8 @@
 					});
 				});
 
-				// Honor +mute
-				if (scope.item.flags && scope.item.flags.indexOf("+mute")>=0)
+				// Honor local mute and +mute
+				if (app._isMuted() || (scope.item.flags && scope.item.flags.indexOf("+mute")>=0))
 					player.setVolume(0);
 
 				// Set up our watcher for active state changes
@@ -130,6 +130,15 @@
 						}
 					})
 				})
+
+				// Handle mute events
+				angular.element('#mute').scope().$watch("mute", function(mute) {
+					console.log("Got mute event");
+					if (!scope.item.flags || !scope.item.flags.indexOf("+mute")>=0) {
+						console.log("Setting mute to " + mute);
+						player.setVolume(mute ? 0 : 100);
+					}
+				});
 			});
 		}
 	);

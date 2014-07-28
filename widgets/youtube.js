@@ -18,7 +18,7 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 	elem.append('<div class="overlay" />');
 	elem.append('<div id="' + scope.id + '_player" />');
 
-	if (scope.item.flags && scope.item.flags.indexOf("+mute")>=0) 
+	if (app._isMuted() || (scope.item.flags && scope.item.flags.indexOf("+mute")>=0))
 		playerVars["mute"]=1;
 
 	var player = new YT.Player(scope.id + '_player', {
@@ -62,6 +62,19 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 
 				scope.$watch("item.position", function() {
 					player.seekTo(scope.item.position, true);
+				});
+
+				// Handle mute events
+				angular.element('#mute').scope().$watch("mute", function(mute) {
+					console.log("Got mute evnt");
+					if (!scope.item.flags || !scope.item.flags.indexOf("+mute")>=0) {
+
+						console.log("Setting mute to "+mute);
+						if (mute)
+							player.mute();
+						else
+							player.unMute();
+					}
 				});
 
 				if (scope.item.position > 0) {

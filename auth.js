@@ -94,6 +94,10 @@ app._setUser = function(user) {
    				var online = app._ref.child("rooms").child(app._getRoom()).child("members").child(user.uid);
    				online.set(profile);
    				online.onDisconnect().remove();
+
+   				if (profile.mute) {
+   					angular.element('#mute').scope().$apply('mute=true');
+   				}
    			}
    			else {
  				$('#changePassword').toggle(app._user.provider === "password");
@@ -165,3 +169,4 @@ app.signout = function() {
 	// TODO FIXME HACK
 	window.setTimeout(function() { window.location.reload() }, 250);
 }
+

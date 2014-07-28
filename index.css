@@ -106,6 +106,17 @@ body {
 	padding-top: 0;
 }
 
+#auth .glyphicon {
+	position: absolute;
+	right: 95px;
+	top: 8px;
+	color: #333;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
 #auth {
 	padding-bottom: 5px;
 }

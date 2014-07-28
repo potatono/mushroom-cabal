@@ -5,6 +5,7 @@ $(window).load(function() { app._init() });
 app._init = function() {
 	app._startTime = (new Date()).getTime();
 	app._ref = new Firebase("https://mushroom-cabal.firebaseio.com");
+	app._mute = false;
 	app._initAuth();
 
 	// Hacky way to make the room actually change when hash changes.. TODO FIXME
@@ -52,7 +53,6 @@ app.controller('Chat', ['$scope', '$firebase', '$firebaseSimpleLogin',
     function($scope, $firebase, $firebaseSimpleLogin) {
     	var room = app._getRoom();
     	var ref = new Firebase('https://mushroom-cabal.firebaseio.com/rooms/'+room+'/chat');
-	    // TODO FIXME ref.limit doens't seem to work.
 	    $scope.messages = $firebase(ref.limit(150));
 	    $scope.user = app._user;
 	    $scope.username = ('Guest' + Math.floor(Math.random()*101))
@@ -123,6 +123,9 @@ app.controller('Content', ['$scope', '$firebase', '$sce',
 
 		$scope.addItem = function() {
 			$scope.items.$add({
+				uid: (app._user && app._user.uid),
+				from: (app._profile && app._profile.username),
+				avatar: (app._profile && app._profile.avatar),
 				name: $scope.name,
 				type: $scope.type,
 				url: $scope.url,
@@ -139,7 +142,7 @@ app.controller('Content', ['$scope', '$firebase', '$sce',
 		// When we receive a URL event broadcast from the chat controller
 		// we call addItem to create a new widget
 		$scope.$on('url', function(event, url, message) {
-			$scope.name = message.replace(url,"").replace(/\+\w+\s?/g,"").replace(/[^\w\s]/g, "");
+			$scope.name = message.replace(url,"").replace(/\+\w+\s?/g,"").replace(/[^\w\s]/g, "").replace(/^\s*$/,"");
 			$scope.flags = message.match(/\+\w+/g) || [];
 			$scope.type = app._getTypeFromUrl(url);
 			$scope.url = url;
@@ -152,3 +155,22 @@ app.controller('Content', ['$scope', '$firebase', '$sce',
 		})
 	}
 ]);
+
+app.controller('Mute', ['$scope','$firebase',
+	function($scope, $firebase) {
+		$scope.mute = false;
+
+		$scope.toggle = function() {
+			$scope.mute = !$scope.mute;
+
+			if (app._profile && app._user && app._user.uid) {
+				app._ref.child("@profiles").child(app._user.uid).child("mute").set($scope.mute);
+			}
+		}
+
+	}
+]);
+
+app._isMuted = function() {
+	return angular.element("#mute").scope().mute;
+}
