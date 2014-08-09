@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+var htmlcarve = require("htmlcarve");
+var url = process.argv.pop();
+
+console.log("Fetching " + url);
+htmlcarve.fromUrl(url, function(error, data) {
+    if (error) { console.log("ERROR: %s", error); }
+    else {
+        console.log(data);
+    }
+});
+
