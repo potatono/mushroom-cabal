@@ -7,19 +7,39 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "app.js",
+			"settings":
+			{
+				"buffer_size": 8401,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 1678,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 187.0,
 		"selected_items":
 		[
 			[
 				":w",
 				":w - Save"
+			],
+			[
+				":x",
+				"Set Syntax: XSL"
 			]
 		],
-		"width": 575.0
+		"width": 392.0
 	},
 	"console":
 	{
@@ -36,7 +56,9 @@
 	},
 	"file_history":
 	[
+		"/Users/justinday/Dropbox/Source/Hacking/mushroom-cabal/index.css",
 		"/Users/justinday/Dropbox/Source/Hacking/mushroom-cabal/index.html",
+		"/Users/justinday/Dropbox/Source/Hacking/mushroom-cabal/app.js",
 		"/Users/justinday/Desktop/ChromeAnswerSDPExample.txt",
 		"/Users/justinday/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings"
 	],
@@ -56,6 +78,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"console",
 			"DSR",
 			"ignored_pack"
 		],
@@ -76,8 +99,63 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "app.js",
+					"settings":
+					{
+						"buffer_size": 8401,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1522,
+								1522
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 281.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 1678,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1506,
+								1506
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

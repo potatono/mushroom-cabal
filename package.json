@@ -6,6 +6,7 @@
   "repository": "https://github.com/potatono/mushroom-cabal",
   "license": "MIT",
   "devDependencies": {
+    "colors.css": "^1.0.0",
     "http-server": "^0.6.1"
   },
   "scripts": {
