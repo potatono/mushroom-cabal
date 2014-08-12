@@ -6,9 +6,7 @@ app.directive('widget', function($sce) {
 		restrict: 'E',
 		replace: true,
 		// TODO Move to templateUrl
-		template: '<span id="{{id}}" class="ui-widget-content" ' +
-			'ng-style="{ top: item.y, left: item.x, width: item.width, ' +
-			'height: item.height, \'z-index\': item.z }"></span>',
+		template: '<div id="{{id}}" class="widget"></div></div>',
 		link: function(scope, elem, attrs) {
 			app._setupWidget(scope, elem, $sce);
 			app._setupWidgetEvents(scope, elem);
@@ -25,9 +23,10 @@ app._registerWidget = function(type, f) {
 app._setupWidget = function(scope, elem, $sce) {
 	scope.$parent.maxZ = Math.max(scope.$parent.maxZ, scope.item.z);
 
-	elem.css("z-index", scope.item.z);
-	elem.append('<span class="close">&times;</span>')
-	elem.append('<h3>'+(scope.item.name || scope.item.type)+'</h3>');
+	//elem.css("z-index", scope.item.z);
+	//elem.append('<span class="close">&times;</span>')
+
+	elem.append('<img src="'+scope.item.avatar+'" class="avatar" />');
 
 	if (app._widgetRegistrations[scope.item.type]) {
 		app._widgetRegistrations[scope.item.type](scope,elem,$sce);
@@ -35,6 +34,8 @@ app._setupWidget = function(scope, elem, $sce) {
 	else {
 		app._widgetRegistrations["iframe"](scope,elem,$sce);	
 	}
+
+	elem.append('<h3>'+(scope.item.name || scope.item.type)+'</h3>');
 };
 
 
@@ -45,6 +46,7 @@ app._setupWidgetEvents = function(scope,elem) {
 		scope.$parent.items.$remove(scope.id);
 	});
 
+/*
 	elem.draggable({
 			start: function(event, ui) {
 			$(this).addClass('dragging').children('.overlay').show();
@@ -78,7 +80,8 @@ app._setupWidgetEvents = function(scope,elem) {
 				})
 			}
 	})
-	.hover(
+*/
+	elem.hover(
   		function() { $(this).addClass('hover'); }, 
 			function() { $(this).removeClass('hover'); }
 	)

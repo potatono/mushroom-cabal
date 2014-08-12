@@ -6,6 +6,7 @@
   	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
   	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  	<link rel="stylesheet" href="css/colors.min.css" type="text/css" />
 	<link rel="stylesheet" href="css/index.css?v=15" type="text/css" />
 </head>
 <body>
@@ -20,17 +21,20 @@
 		</div>
 	</div>
 
-	<div id="chat" class="well" ng-controller="Chat">
+	<div id="chat" ng-controller="Chat">
 		<div id="auth">
 			<span class="username" ng-show="user">Hello <a href="javascript:void(0)" onclick="app.updateProfile();">{{username}}</a>!</span>
-			
+
 			<span id="mute" class="glyphicon glyphicon-volume-up" ng-controller="Mute" ng-class="{true:'glyphicon glyphicon-volume-off', false:'glyphicon glyphicon-volume-up'}[mute]" ng-click="toggle();"></span>
 			<button ng-hide="user" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#loginDialog">login</button>
 			<button ng-show="user" class="btn btn-primary btn-sm" onclick="app.signout();">logout</button>
 
-			<!--<span ng-hide="auth.user"><a href="#" ng-click="auth.$login('password')">login</a></span>
-			<span ng-show="auth.user"><a href="#" ng-click="auth.$logout();">logout</a></span>-->
 		</div>
+
+		<div id="presence" ng-controller="Presence">
+			<img ng-repeat="user in users" class="img-circle" ng-src="{{user.avatar}}" title="{{user.username}}" />
+		</div>
+
 		<div id="messages">
 			<div ng-cloak class="message" ng-repeat="message in messages">
 				<div ng-class="{true:'mine', false:'notmine'}[message.uid==user.uid]">
@@ -39,14 +43,12 @@
 				</div>
 			</div>
 		</div>
+		
 		<form ng-show="user" class="form-inline" ng-submit="addMessage()">
-			<input id="message" type="text" ng-model="message" placeholder="Message...">
+			<input id="message" type="text" ng-model="message" placeholder="Message..." />
 		</form>
 	</div>
 
-	<div id="presence" ng-controller="Presence">
-		<img ng-repeat="user in users" class="img-circle" ng-src="{{user.avatar}}" title="{{user.username}}" />
-	</div>
 
 	<div class="modal fade" id="loginDialog" role="dialog">
 		<div class="modal-dialog">
@@ -135,6 +137,7 @@
 	<script src="//www.youtube.com/iframe_api"></script>
 	<script src="//w.soundcloud.com/player/api.js"></script>
 	<script src="js/md5.js"></script>
+	<script src="js/colors.js"></script>
 	<script src="js/app.js?v=15"></script>
 	<script src="js/auth.js?v=15"></script>
 	<script src="js/widgets.js?v=15"></script>

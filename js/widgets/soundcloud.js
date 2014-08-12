@@ -11,7 +11,7 @@
 			}
 
 			elem.append('<div class="overlay" />');
-			elem.append('<iframe id="'+scope.id+'_player" src="'+url+
+			elem.append('<iframe class="content" id="'+scope.id+'_player" src="'+url+
 				'" frameborder="0"></iframe>');
 
 			if (elem.children('h3').text() == "soundcloud" && data.title)
