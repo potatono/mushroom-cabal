@@ -10,12 +10,11 @@
 				url += "&auto_play=true";
 			}
 
-			elem.append('<div class="overlay" />');
-			elem.append('<iframe class="content" id="'+scope.id+'_player" src="'+url+
+			elem.append('<iframe id="'+scope.id+'_player" src="'+url+
 				'" frameborder="0"></iframe>');
 
-			if (elem.children('h3').text() == "soundcloud" && data.title)
-				elem.children('h3').text(data.title);
+			//if (elem.children('h3').text() == "soundcloud" && data.title)
+			//	elem.children('h3').text(data.title);
 
 
 			// Initialize the SoundCloud API

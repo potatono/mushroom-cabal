@@ -9,7 +9,6 @@ app.directive('widget', function($sce) {
 		template: '<div id="{{id}}" class="widget"></div></div>',
 		link: function(scope, elem, attrs) {
 			app._setupWidget(scope, elem, $sce);
-			app._setupWidgetEvents(scope, elem);
 		}
 	};
 });
@@ -23,72 +22,20 @@ app._registerWidget = function(type, f) {
 app._setupWidget = function(scope, elem, $sce) {
 	scope.$parent.maxZ = Math.max(scope.$parent.maxZ, scope.item.z);
 
-	//elem.css("z-index", scope.item.z);
-	//elem.append('<span class="close">&times;</span>')
-
 	elem.append('<img src="'+scope.item.avatar+'" class="avatar" />');
+	elem.append('<h3>'+scope.item.from+'</h3>')
+
+	elem.append('<div class="content"></div>');
+
+	var innerElem = elem.children('.content');
 
 	if (app._widgetRegistrations[scope.item.type]) {
-		app._widgetRegistrations[scope.item.type](scope,elem,$sce);
+		app._widgetRegistrations[scope.item.type](scope,innerElem,$sce);
 	}
 	else {
-		app._widgetRegistrations["iframe"](scope,elem,$sce);	
+		app._widgetRegistrations["iframe"](scope,innerElem,$sce);	
 	}
 
-	elem.append('<h3>'+(scope.item.name || scope.item.type)+'</h3>');
+	if (scope.item.description)
+		elem.append('<div class="description">'+ scope.item.description +'</div>');
 };
-
-
-// Add the events to the widget to make it active.
-app._setupWidgetEvents = function(scope,elem) {
-	elem.children('.close').click(function(e) { 
-		e.stopPropagation();
-		scope.$parent.items.$remove(scope.id);
-	});
-
-/*
-	elem.draggable({
-			start: function(event, ui) {
-			$(this).addClass('dragging').children('.overlay').show();
-		},
-		
-		stop: function(event, ui) {
-				$(this).removeClass('dragging').children('.overlay').hide();
-
-  				scope.$apply(function read() {
-					scope.item.x = elem.css('left');
-					scope.item.y = elem.css('top');
-					scope.item.z = elem.css('z-index');
-					scope.$parent.items.$save(scope.id);
-				})
-			}
-		})
-	.resizable({
-  		start: function(event, ui) {
-			$(this).addClass('resizing').children('.overlay').show();
-		},
-		resize: function(event,ui) {
-				$(this).children('.overlay').show();
-		},
-		stop: function(event, ui) {
-			$(this).removeClass('resizing').children('.overlay').hide();;
-
-				scope.$apply(function() {
-					scope.item.width = elem.css('width');
-					scope.item.height = elem.css('height');
-  					scope.$parent.items.$save(scope.id);
-				})
-			}
-	})
-*/
-	elem.hover(
-  		function() { $(this).addClass('hover'); }, 
-			function() { $(this).removeClass('hover'); }
-	)
-	.click(
-		function() {
-			scope.item.z = ++scope.$parent.maxZ;
-			scope.$parent.items.$save(scope.id);
-		}
-	);
-}

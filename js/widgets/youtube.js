@@ -15,7 +15,6 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 	console.log("Loading YouTube video="+videoId)
 	//var url = $sce.trustAsResourceUrl("//www.youtube.com/embed/"+videoId);
 
-	elem.append('<div class="overlay" />');
 	elem.append('<div id="' + scope.id + '_player" />');
 
 	if (app._isMuted() || (scope.item.flags && scope.item.flags.indexOf("+mute")>=0))
