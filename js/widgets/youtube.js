@@ -27,7 +27,7 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 		videoId: videoId,
 		playerVars: playerVars,
 		events: {
-			onStateChange: function(e) {  
+/*			onStateChange: function(e) {  
 				if (e.data == YT.PlayerState.PLAYING) {
 					scope.$apply(function() {
 						scope.item.active = true;
@@ -47,10 +47,10 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 					player.playVideo();
 				}
 			},
-
+*/
 			onReady: function(e) {
 				if (playerVars["mute"]) player.mute();
-
+/*
 				scope.$watch("item.active", function() {
 					if (scope.item.active) {
 						player.playVideo();
@@ -63,7 +63,7 @@ app._registerWidget("youtube", function(scope, elem, $sce) {
 				scope.$watch("item.position", function() {
 					player.seekTo(scope.item.position, true);
 				});
-
+*/
 				// Handle mute events
 				angular.element('#mute').scope().$watch("mute", function(mute) {
 					console.log("Got mute evnt");

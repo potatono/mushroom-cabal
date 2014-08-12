@@ -42,19 +42,21 @@
 									console.log("Index changed to " + idx);
 
 									player.currentIndex = idx;
-									scope.$apply(function() {
+/*									scope.$apply(function() {
 										scope.item.index = idx;
 										scope.item.position = 0;
 										scope.$parent.items.$save(scope.id);
 										player.seekTo(0);
 									});
+*/									
 								}
 								// Otherwise send the play event on
 								else {
-									scope.$apply(function() {
+/*									scope.$apply(function() {
 										scope.item.active = isPlay;
 										scope.$parent.items.$save(scope.id);
 									});
+*/									
 								}
 							});
 						}
@@ -64,7 +66,7 @@
 				// Bind our handler to PLAY and PAUSE
 				player.bind(SC.Widget.Events.PLAY, playPauseHandler(true));
 				player.bind(SC.Widget.Events.PAUSE, playPauseHandler(false));
-
+/*
 				// Watch for FINISH so we can honor +loop
 				player.bind(SC.Widget.Events.FINISH, function() {
 					console.log("FINISH");
@@ -83,11 +85,11 @@
 						scope.$parent.items.$save(scope.id);
 					});
 				});
-
+*/
 				// Honor local mute and +mute
 				if (app._isMuted() || (scope.item.flags && scope.item.flags.indexOf("+mute")>=0))
 					player.setVolume(0);
-
+/*
 				// Set up our watcher for active state changes
 				scope.$watch("item.active", function() {
 					// We check to see if the player is already in the state
@@ -139,6 +141,7 @@
 						player.setVolume(mute ? 0 : 100);
 					}
 				});
+*/
 			});
 		}
 	);
